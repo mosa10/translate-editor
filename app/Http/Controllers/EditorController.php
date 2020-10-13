@@ -7,9 +7,22 @@ use Illuminate\Http\Request;
 
 class EditorController extends Controller
 {
-    public function index()
+    public function index( $id )
     {
-        return view('editor.index');
+        $editorService = new EditorService;
+
+        $listSentence = $editorService->getSentence($id);
+
+        return view('editor.index', [
+            'listSentence' => $listSentence,
+        ]);
+    }
+
+    public function meta( $id )
+    {
+        $editorService = new EditorService;
+
+        return $editorService->getMeta($id);
     }
 
     public function sentence( $id )

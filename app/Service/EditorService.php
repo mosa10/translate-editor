@@ -81,7 +81,23 @@ class EditorService
         $domOut->save($pathXml);
     }
 
-    public function getSentence($id, $indexStart, $indexEnd = null)
+    public function getMeta($id)
+    {
+        $result = [];
+
+        $pathWork = "/var/www/data/work.xml";
+
+        $dom = new DOMDocument;
+        $dom->load($pathWork);
+
+        $listSentence = $dom->getElementsByTagName("sentence");
+
+        $result["count"] = $listSentence->length;
+
+        return $result;
+    }
+
+    public function getSentence($id, $indexStart = 0, $indexEnd = null)
     {
         $result = [];
 
@@ -97,10 +113,9 @@ class EditorService
         }
 
         for ($index = $indexStart; $index < $indexEnd; $index++) {
-            $sentence = new Sentence;
-
             $node = $listSentence->item($index);
-
+            
+            $sentence = new Sentence;
             $sentence->load($node);
 
             $result[$index] = $sentence;

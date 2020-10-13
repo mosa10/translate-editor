@@ -1,0 +1,42 @@
+table {
+    width: 100%;
+}
+td {
+    width: 50%;
+    border: 1px solid #ccc;
+}
+
+/**
+ * tag
+ */
+.tag {
+    background-color: #449baa;
+}
+
+
+#test {
+    font-size: 0;
+}
+.txt, .pre, .tag {
+    font-size: 16px;
+    margin: 0;
+    padding: 0px;
+}
+.cursor {
+    position: absolute;
+    height: 20px;
+    border-left: 1px solid #444;
+    left: 100px;
+}
+.cursor-red {
+    position: absolute;
+    height: 20px;
+    border-left: 1px solid red;
+}
+.input {
+    width: 1px;
+    height: 1px;
+}
+.selection {
+    background-color: #9edce7;
+}

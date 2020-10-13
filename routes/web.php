@@ -14,5 +14,9 @@ use App\Http\Controllers\EditorController;
 |
 */
 
-Route::get('/', [EditorController::class, 'index']);
+Route::get('/editor/{id}', [EditorController::class, 'index']);
+
+// メタ情報取得
+Route::get('/editor/{id}/meta', [EditorController::class, 'meta']);
+// 文章取得
 Route::get('/editor/{id}/sentence', [EditorController::class, 'sentence']);
