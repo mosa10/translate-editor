@@ -21,19 +21,19 @@ td {
     font-size: 16px;
     margin: 0;
     padding: 0px;
+    border-left: 1px solid transparent;
+}
+.txt.caret {
+    border-left: 1px solid #444;
+}
+.pre.caret {
+    border-left: 1px solid #a00;
 }
 .cursor {
     position: absolute;
-    height: 20px;
-    border-left: 1px solid #444;
-    left: 100px;
 }
-.cursor-red {
-    position: absolute;
-    height: 20px;
-    border-left: 1px solid red;
-}
-.input {
+.input, .copy {
+    opacity: 0;
     width: 1px;
     height: 1px;
 }
