@@ -4,15 +4,25 @@ table {
 td {
     width: 50%;
     border: 1px solid #ccc;
+    word-break: break-all;
 }
 
 /**
  * tag
  */
 .tag {
-    background-color: #449baa;
+    background-color: #4fe4ff;
+}
+.tag-open {
+    border-radius: 10px 0 0 10px;
+}
+.tag-close {
+    border-radius: 0 10px 10px 0;
 }
 
+.line.focus {
+    background-color: wheat;
+}
 
 #test {
     font-size: 0;
@@ -22,6 +32,14 @@ td {
     margin: 0;
     padding: 0px;
     border-left: 1px solid transparent;
+    /* user-select */
+    user-select: none; /* CSS3 */
+    -moz-user-select: none; /* Firefox */
+    -webkit-user-select: none; /* Safari、Chromeなど */
+    -ms-user-select: none; /* IE10 */
+}
+.pre {
+    border-bottom: 2px solid #c77;
 }
 .txt.caret {
     border-left: 1px solid #444;
@@ -32,8 +50,8 @@ td {
 .cursor {
     position: absolute;
 }
-.input, .copy {
-    opacity: 0;
+#input-key, .copy {
+    opacity: 1;
     width: 1px;
     height: 1px;
 }

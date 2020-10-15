@@ -64,8 +64,7 @@ class EditorService
 
             // id
             $id = $transUnit->getAttribute("id");
-            list($prefix, $key) = explode("-", $id);
-            $sentence->setAttribute("range", "{$key}:0-e");
+            $sentence->setAttribute("range", "{$id}:0-e");
 
             // source
             $source = $domOut->createElement("source");
@@ -101,7 +100,7 @@ class EditorService
     {
         $result = [];
 
-        $pathWork = "/var/www/data/work.xml";
+        $pathWork = "/var/www/data/work.docx.xml";
 
         $dom = new DOMDocument;
         $dom->load($pathWork);

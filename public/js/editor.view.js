@@ -3,15 +3,22 @@ class EditorView {
     
     convertHTML(){
         $('.text').each((index, element) => {
+            if ( index == 68 ){
+                console.log(index);
+            }
+
             let that = this;
             let text = $(element).text();
 
             $(element).empty();
 
             // タグ検索
-            let match = text.match(/{g:[0-9]+}|{\/g}/g);
+            let match = text.match(/{(g|x):[0-9]+}|{\/(g|x)}/g);
 
             if ( match && match.length > 0 ){
+                match = Array.from(new Set(match));
+
+                console.log(match);
                 let listText = [text];
                 
                 var tmp = [];
@@ -55,8 +62,8 @@ class EditorView {
     }
 
     converTag( str ){
-        str = str.replace(/{g:([0-9])+}/g, '<span class="tag tag-start">$1</span>');
-        str = str.replace(/{\/g}/g, '<span class="tag tag-end"></span>');
+        str = str.replace(/{(g|x):([0-9])+}/g, '<span class="tag tag-open">$1$2</span>');
+        str = str.replace(/{\/(g|x)}/g, '<span class="tag tag-close">$1</span>');
 
         return str;
     }
@@ -69,36 +76,37 @@ class EditorView {
         var tmp = [];
         var key = keys[index];
 
-        console.log("1", listText);
+        var indexNext = index + 1;
 
         /*
          * ABC<1>DEF<2>GHQ
          */
         listText.forEach( text => {
-            console.log("2", text);
             /*
              * ABC,DEF<2>GHQ
              */
             let split = text.split(key);
-            console.log("3", split);
 
-            if ( split.length > 1 ){
+            if ( split.length == 1 && $.trim(split[0]).length == 0 ){
+                tmp.push(split[0]);
+            } else {
+                let isHit = (split.length > 1);
                 var t = [];
 
-                let a = this.sss(split, keys, ++index);
+                let a = this.sss(split, keys, indexNext);
 
-                a.forEach( b => {
-                    t.push(b);
-                    t.push(key);
-                });
+                if ( isHit ){
+                    a.forEach( b => {
+                        t.push(b);
+                        t.push(key);
+                    });
 
-                t.pop();
-                tmp.push(t);
-            } else {
-                tmp.push(split[0]);
+                    t.pop();
+                    tmp.push(t);
+                } else {
+                    tmp.push(a);
+                }
             }
-
-            console.log("4", tmp);
         });
 
         return tmp;

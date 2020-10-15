@@ -23,11 +23,28 @@ tu2:0-10
 tu1:0-4
 tu1:5-11+tu2:0-10
 
-
 ## 分割
 ### ノーマル
 tu1:0-4
 tu1:5-11
+
+
+# コマンド
+## xxx -> xlf 変換
+```
+sh /var/www/tool/okapi/tikal.sh -x /var/www/data/test.docx -sl ja -tl en -nocopy
+```
+
+## コマンドクラス 作成
+```
+php artisan make:command editor/XLIFF2XMLCommand
+```
+
+## xlf -> work.xml 変換
+```
+php artisan command:xliff2xml
+```
+
 
 # 資料
 ## Laravel
