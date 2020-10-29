@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EditorController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\SentenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,12 @@ use App\Http\Controllers\EditorController;
 |
 */
 
-Route::get('/editor/{id}', [EditorController::class, 'index']);
+Route::get('/document/{id}/edit', [DocumentController::class, 'edit']);
 
 // メタ情報取得
-Route::get('/editor/{id}/meta', [EditorController::class, 'meta']);
-// 文章取得
-Route::get('/editor/{id}/sentence', [EditorController::class, 'sentence']);
+Route::get('/document/{id}/meta', [DocumentController::class, 'meta']);
+// 文章
+Route::resource('/document/{documentId}/sentence', SentenceController::class)->only([
+    'index', 'update'
+]);
+Route::put('/document/{documentId}/sentence', [SentenceController::class, 'update']);

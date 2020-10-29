@@ -3,16 +3,16 @@
 namespace App\Console\Commands\editor;
 
 use Illuminate\Console\Command;
-use App\Service\EditorService;
+use App\Service\DocumentService;
 
-class XLIFF2XMLCommand extends Command
+class Xlf2DBCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:xliff2xml';
+    protected $signature = 'command:xlf2db';
 
     /**
      * The console command description.
@@ -38,10 +38,10 @@ class XLIFF2XMLCommand extends Command
      */
     public function handle()
     {
-        echo "xliff2xml\n";
+        echo "xlf2db\n";
 
-        $editorService = new EditorService;
-        $editorService->convertWork("/var/www/data/test.docx.xlf", "/var/www/data/work.xml");
+        $documentService = new DocumentService;
+        $documentService->create("/var/www/data/test.docx.xlf");
 
         return 0;
     }

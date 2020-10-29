@@ -3,10 +3,6 @@ class EditorView {
     
     convertHTML(){
         $('.text').each((index, element) => {
-            if ( index == 68 ){
-                console.log(index);
-            }
-
             let that = this;
             let text = $(element).text();
 
@@ -62,8 +58,8 @@ class EditorView {
     }
 
     converTag( str ){
-        str = str.replace(/{(g|x):([0-9])+}/g, '<span class="tag tag-open">$1$2</span>');
-        str = str.replace(/{\/(g|x)}/g, '<span class="tag tag-close">$1</span>');
+        str = str.replace(/{(g|x):([0-9])+}/g, '<span class="tag tag-open" data-tag="$1" data-index="$2">$1$2</span>');
+        str = str.replace(/{\/(g|x)}/g, '<span class="tag tag-close" data-tag="$1">$1</span>');
 
         return str;
     }

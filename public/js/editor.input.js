@@ -1,151 +1,216 @@
-class EditorInput {
-    self = null;
-
+class EditorInput extends EditorCore {
     constructor(){
-        self = this;
+        super();
+
+        this.current = null;
+        this.composition = false;
+        this.mousedown = false;
     }
 
     initialize(){
+        // notification
+        $(document).on('editor.input.join', this.onJoin);
+        $(document).on('editor.input.insertTag', this.onInsertTag);
+
         // document
-        $(document).on('mouseup', self.onMouseupDocument);
+        $(document).on('mouseup', this.onMouseupDocument);
 
         // .sentence
-        $(document).on('mousedown', '.sentence', self.onMousedownSentence);
-        $(document).on('click', '.sentence, .txt', self.onClickSentenceOrTxt);
+        $(document).on('mousedown', '.sentence', this.onMousedownSentence);
+        $(document).on('click', '.sentence, .txt', this.onClickSentenceOrTxt);
 
         // #input-key
-        $('#input-key').on('copy', self.onCopyInputKey);
-        $('#input-key').on('paste', self.onPasteInputKey);
-        $('#input-key').on('contextmenu', self.onContextmenuInputKey);
-        $('#input-key').on('focus', self.onFocusInputKey);
-        $('#input-key').on('keydown', self.onKeydownInputKey);
-        $('#input-key').on('keyup', self.onKeyupInputKey);
-        $('#input-key').on('compositionstart', self.onCompositionstartInputKey);
-        $('#input-key').on('compositionend', self.onCompositionendInputKey);
-        $('#input-key').on('blur', self.onBlurInputKey);
+        $('#input-key').on('copy', this.onCopyInputKey);
+        $('#input-key').on('paste', this.onPasteInputKey);
+        $('#input-key').on('contextmenu', this.onContextmenuInputKey);
+        $('#input-key').on('focus', this.onFocusInputKey);
+        $('#input-key').on('keydown', this.onKeydownInputKey);
+        $('#input-key').on('keyup', this.onKeyupInputKey);
+        $('#input-key').on('compositionstart', this.onCompositionstartInputKey);
+        $('#input-key').on('compositionend', this.onCompositionendInputKey);
+        $('#input-key').on('blur', this.onBlurInputKey);
 
         // .txt
-        $(document).on('mousedown', '.txt', self.onMousedownTxt);
-        $(document).on('mouseleave', '.txt', self.onMouseleaveTxt);
+        $(document).on('mousedown', '.txt', this.onMousedownTxt);
+        $(document).on('mouseleave', '.txt', this.onMouseleaveTxt);
     }
 
-    current = null;
-    composition = false;
-    mousedown = false;
+    onJoin = () => {
+        let line1 = this.current.closest('.line');
+        let line2 = line1.next();
 
-    onMousedownSentence( event ){
+        let range1 = line1.attr('data-range');
+        let range2 = line2.attr('data-range');
+
+        ['.text-s', '.text-t'].map(function( target ){
+            let target1 = line1.find(target);
+            let target2 = line2.find(target);
+
+            target1.find('.txt-end').remove();
+
+            if ( range1.search(/e$/) >= 0 ){
+                target1.append($('<span>', {
+                    'class': 'join'
+                }));
+            }
+
+            target1.append(target2.children());
+        });
+
+        line2.remove();
+
+        line1.attr('data-range', [range1, range2].join(','));
+
+        'join', range1, range2
+    }
+
+    onInsertTag = () => {
+        let source = this.current.closest('.line').find('.text-s');
+        let target = this.current.closest('.line').find('.text-t');
+
+        let that;
+        let hit;
+
+        source.find('.tag').each(function(){
+            that = this;
+            let index = $(this).attr('data-index');
+
+            let isHit = false;
+
+            target.find('.tag').each(function(){
+                if ( index === $(this).attr('data-index') ){
+                    isHit = true;
+
+                    return false;
+                }
+            });
+
+            if ( ! isHit ){
+                hit = that;
+
+                return false;
+            }
+        });
+
+        if ( that ){
+            this.current.before($(that).clone());
+
+            this.triggerChange({elmLine: this.current.closest('.line')});
+        }
+    }
+
+
+    onMousedownSentence = ( event ) => {
         event.preventDefault();
         event.stopPropagation();
 
         // テキスト最後の要素のmousedownイベント発火
-        $(this).find('.txt').last().trigger('mousedown');
+        $(event.currentTarget).find('.txt').last().trigger('mousedown');
     }
 
-    onCopyInputKey( event ){
+    onCopyInputKey = ( event ) => {
         return false;
     }
 
-    onPasteInputKey( event ){
+    onPasteInputKey = ( event ) => {
         return false;
     }
 
-    onContextmenuInputKey( event ){
+    onContextmenuInputKey = ( event ) => {
         return false;
     }
 
-    onFocusInputKey( event ){
+    onFocusInputKey = ( event ) => {
         return false;
     }
 
-    onKeydownInputKey( event ){
+    onKeydownInputKey = ( event ) => {
         //console.log('keydown', event.keyCode, composition);
 
         switch ( event.keyCode ){
             // End
             case 35:
-                if ( ! self.composition ){
+                if ( ! this.composition ){
                     let elm = $('td.focus .txt').last();
 
                     if ( event.shiftKey ){
-                        self.select($('.txt').index($('.txt.selection-start')), $('.txt').index(elm));
+                        this.select($('.txt').index($('.txt.selection-start')), $('.txt').index(elm));
                     }
-                    self.moveCursor(elm, true);
+                    this.moveCursor(elm, true);
                 }
                 return false;
             // Home
             case 36:
-                if ( ! self.composition ){
+                if ( ! this.composition ){
                     let elm = $('td.focus .txt').first();
 
                     if ( event.shiftKey ){
-                        self.select($('.txt').index($('.txt.selection-start')), $('.txt').index(elm));
+                        this.select($('.txt').index($('.txt.selection-start')), $('.txt').index(elm));
                     }
-                    self.moveCursor(elm, true);
+                    this.moveCursor(elm, true);
                 }
                 return false;
             // 左矢印
             case 37:
-                if ( ! self.composition ){
+                if ( ! this.composition ){
                     if ( event.shiftKey ){
-                        self.current.prev().toggleClass('selection');
+                        this.current.prev().toggleClass('selection');
 
-                        self.moveCursor(self.current.prev(), true);
+                        this.moveCursor(this.current.prev(), true);
                     } else {
                         if ( $('.txt.selection').length > 0 ){
-                            self.moveCursor($('.txt.selection').first(), true);
-                            self.clearSelect();
+                            this.moveCursor($('.txt.selection').first(), true);
+                            this.clearSelect();
                         } else {
-                            self.moveCursor(self.current.prev(), true);
+                            this.moveCursor(this.current.prev(), true);
                         }
                     }
                 }
                 return false;
             // 上矢印
             case 38:
-                self.clearSelect();
+                this.clearSelect();
 
-                var moveElm = self.guessMoveElm(self.current, true);
+                var moveElm = this.guessMoveElm(this.current, true);
                 if ( event.shiftKey ){
-                    self.select($('.txt').index($('.txt.selection-start')), $('.txt').index(moveElm));
+                    this.select($('.txt').index($('.txt.selection-start')), $('.txt').index(moveElm));
                 }
-                self.moveCursor(moveElm, true);
+                this.moveCursor(moveElm, true);
                 return false;
             // 右矢印
             case 39:
-                if ( ! self.composition ){
+                if ( ! this.composition ){
                     if ( event.shiftKey ){
-                        self.current.toggleClass('selection');
+                        this.current.toggleClass('selection');
 
-                        self.moveCursor(self.current.next(), true);
+                        this.moveCursor(this.current.next(), true);
                     } else {
                         if ( $('.txt.selection').length > 0 ){
-                            self.clearSelect();
+                            this.clearSelect();
                         } else {
-                            self.moveCursor(self.current.next(), true);
+                            this.moveCursor(this.current.next(), true);
                         }
                     }
                 }
                 return false;
             // 下矢印
             case 40:
-                self.clearSelect();
+                this.clearSelect();
 
-                var moveElm = self.guessMoveElm(self.current, false);
+                var moveElm = this.guessMoveElm(this.current, false);
                 if ( event.shiftKey ){
-                    self.select($('.txt').index($('.txt.selection-start')), $('.txt').index(moveElm));
+                    this.select($('.txt').index($('.txt.selection-start')), $('.txt').index(moveElm));
                 }
-                self.moveCursor(moveElm, true);
+                this.moveCursor(moveElm, true);
                 return false;
         }
     }
 
-    onKeyupInputKey( event ){
-        console.log('keyup', event.keyCode, self.composition);
+    onKeyupInputKey = ( event ) => {
+        console.log('keyup', event.keyCode, this.composition);
 
         event.preventDefault();
         event.stopPropagation();
-        
-        let isComposing = false;
 
         switch ( event.keyCode ){
             // back space
@@ -153,7 +218,7 @@ class EditorInput {
                 if ( $('.txt.selection').length > 0 ){
                     $('.txt.selection').remove();
                 } else {
-                    self.removeTxt(self.current.prev());
+                    this.removeTxt(this.current.prev());
                 }
                 return false;
             // Enter
@@ -170,43 +235,42 @@ class EditorInput {
                 if ( $('.txt.selection').length > 0 ){
                     $('.txt.selection').remove();
                 } else {
-                    self.removeTxt(self.current);
+                    this.removeTxt(this.current);
                 }
                 return false;
             // a
             case 65:
                 if ( event.ctrlKey ){
-                    self.selectAll();
+                    this.selectAll();
                     return false;
                 }
                 break;
             // c
             case 67:
                 if ( event.ctrlKey ){
-                    self.copyText();
+                    this.copyText();
                     return false;
                 }
                 break;
             // v
             case 86:
                 if ( event.ctrlKey ){
-                    self.pasteText();
+                    this.pasteText();
                     return false;
                 }
                 break;
             // x
             case 88:
                 if ( event.ctrlKey ){
-                    self.cutText();
+                    this.cutText();
                     return false;
                 }
                 break;
-            case 229:
-                //isComposing = true;
+            default:
                 break;
         }
 
-        let val = $(this).val();
+        let val = $(event.currentTarget).val();
 
         if ( val.length == 0 ){
             return false;
@@ -216,67 +280,68 @@ class EditorInput {
 
         $('.txt.selection').remove();
         
-        if ( self.composition ){
+        if ( this.composition ){
             $('.pre').remove();
 
             val.split('').forEach( s => {
-                self.current.before($('<span>', {
+                this.current.before($('<span>', {
                     'class': 'pre'
                 }).text(s));
             });
 
-            self.moveCursor(self.current, true);
+            this.moveCursor(this.current, true);
 
             let pos = $(this).get(0).selectionStart;
             let elm = $('.pre').eq(pos);
             if ( elm.length > 0 ){
-                self.moveCursor(elm, false);
+                this.moveCursor(elm, false);
             } else {
-                self.moveCursor(self.current, false);
+                this.moveCursor(this.current, false);
             }
 
-            self.moveInput();
+            this.moveInput();
         } else {
-            self.current.before($('<span>', {
+            this.current.before($('<span>', {
                 'class': 'txt'
             }).text(val));
 
-            $(this).val('');
+            $(event.currentTarget).val('');
 
-            self.moveCursor(self.current, true);
+            this.moveCursor(this.current, true);
         }
+
+        this.triggerChange({elmLine: this.current.closest('.line')});
 
         return false;
     }
 
-    onCompositionstartInputKey( event ){
-        //console.log('self.compositionstart');
-        self.composition = true;
+    onCompositionstartInputKey = ( event ) => {
+        this.composition = true;
 
-        $(this).css('width', '1000px');
+        $(event.currentTarget).css('width', '1000px');
 
-        self.moveInput();
+        this.moveInput();
     }
 
-    onCompositionendInputKey( event ){
-        //console.log('self.compositionend');
-        self.composition = false;
+    onCompositionendInputKey = ( event ) => {
+        this.composition = false;
 
-        $(this).css('width', '0');
+        $(event.currentTarget).css('width', '0');
 
         $('.pre').removeClass('pre').addClass('txt');
 
-        $(this).val('');
+        $(event.currentTarget).val('');
     }
 
-    onBlurInputKey( event ){
+    onBlurInputKey = ( event ) => {
         console.log('blur');
+
         $('.pre').removeClass('pre').addClass('txt');
 
-        $(this).val('');
+        $(event.currentTarget).val('');
     }
 
-    onClickSentenceOrTxt( event ){
+    onClickSentenceOrTxt = ( event ) => {
         // ダブルクリック
         if ( event.detail === 2 ){
             let indexStart = 0;
@@ -306,39 +371,39 @@ class EditorInput {
         }
     }
 
-    onMousedownTxt( event ){
+    onMousedownTxt = ( event ) => {
         //console.log('mousedown');
 
         event.preventDefault();
         event.stopPropagation();
 
-        self.mousedown = true;
+        this.mousedown = true;
 
         $('*').removeClass('selection-start');
         $('*').removeClass('selection');
-        $(this).addClass('selection-start');
+        $(event.currentTarget).addClass('selection-start');
 
-        self.moveCursor(this, true);
+        this.moveCursor(event.currentTarget, true);
 
         return false;
     }
 
-    onMouseupDocument(){
+    onMouseupDocument = () => {
         //console.log('mouseup');
 
-        self.mousedown = false;
+        this.mousedown = false;
     }
 
-    onMouseleaveTxt(){
+    onMouseleaveTxt = ( event ) => {
         //console.log('mouseleave', mousedown, $(this).text());
 
-        if ( self.mousedown ){
+        if ( this.mousedown ){
             let indexStart = $('.txt').index($('.txt.selection-start'));
-            let indexEnd = $('.txt').index(this);
+            let indexEnd = $('.txt').index(event.currentTarget);
 
-            self.select(indexStart, indexEnd);
+            this.select(indexStart, indexEnd);
 
-            self.moveCursor(indexStart < indexEnd ? $(this).next() : this, true);
+            this.moveCursor(indexStart < indexEnd ? $(event.currentTarget).next() : event.currentTarget, true);
         }
     };
 
@@ -401,7 +466,7 @@ class EditorInput {
 
         $('.copy').val(text);
 
-        $('.copy').self.select();
+        $('.copy').select();
         document.execCommand('copy');
 
         $('#input-key').focus();
@@ -430,7 +495,7 @@ class EditorInput {
         console.log(text);
 
         text.split('').forEach( txt => {
-            self.current.before($('<span>', {
+            this.current.before($('<span>', {
                 'class': 'txt'
             }).text(txt));
         });
@@ -483,7 +548,7 @@ class EditorInput {
         }
 
         if ( is ){
-            self.current = $(elm);
+            this.current = $(elm);
         }
 
         $('.line').removeClass('focus');
@@ -504,8 +569,8 @@ class EditorInput {
         let left = 0;
 
         if ( $('.pre').length == 0 ){
-            top = $(self.current).offset().top + $(self.current).outerHeight();
-            left = $(self.current).offset().left;
+            top = $(this.current).offset().top + $(this.current).outerHeight();
+            left = $(this.current).offset().left;
         } else {
             $('.pre').each(function(){
                 top = Math.max(top, $(this).offset().top + $(this).outerHeight());
@@ -515,10 +580,10 @@ class EditorInput {
         }
 
         console.log(top, left);
-        //console.log(self.current.text());
+        //console.log(this.current.text());
 
         if ( top == 0 ){
-            //console.log(self.current.text());
+            //console.log(this.current.text());
         }
 
         $('.cursor').css({
@@ -532,13 +597,13 @@ class EditorInput {
             return false;
         }
 
-        if ( elm === self.current ){
-            self.current = self.current.next();
+        if ( elm === this.current ){
+            this.current = this.current.next();
         }
 
         $(elm).remove();
 
-        self.moveCursor(self.current, true);
+        this.moveCursor(this.current, true);
     }
 
 }

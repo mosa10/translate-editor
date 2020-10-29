@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
-        Commands\editor\XLIFF2XMLCommand::class
+        Commands\editor\Xlf2DBCommand::class
     ];
 
     /**

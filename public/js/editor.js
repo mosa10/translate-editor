@@ -3,15 +3,24 @@ let editor = {};
 (function(){
     const editorView = new EditorView;
     const editorInput = new EditorInput;
+    const editorOperation = new EditorOperation;
+    const editorData = new EditorData;
 
     let property = {};
 
     const initialize = function(){
-        getMeta();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        //getMeta();
         getSentence();
 
         editorInput.initialize();
-
+        editorOperation.initialize();
+        
         editorView.convertHTML();
     };
 
