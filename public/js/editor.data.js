@@ -3,10 +3,12 @@ class EditorData extends EditorCore {
         super();
 
         this.history = [];
-        this.saveList = {};
+        this.saveList = [];
 
         // notification
         $(document).on('editor.data.change', this.onChange);
+        $(document).on('editor.data.join', this.onJoin);
+        $(document).on('editor.data.split', this.onSplit);
 
         setInterval(this.save, 3000);
     }
@@ -18,9 +20,12 @@ class EditorData extends EditorCore {
         let target = this.elementTotext($(elmLine).find('.text-t'));
 
         return new EditorModelSentence({
+            'document_id' : 1,
             'range' : id,
             'source': source,
-            'target': target
+            'source_tag': source,
+            'target': target,
+            'target_tag': target
         });
     }
 
@@ -48,31 +53,39 @@ class EditorData extends EditorCore {
     onChange = (event, data) => {
         let range = data.elmLine.attr('data-range');
 
-        this.saveList[range] = {
+        this.saveList.push({
             'event' : 'update',
             'range' : [range],
             'sentence' : this.getSentenceObject(range)
-        };
+        });
     }
 
     onJoin = (event, data) => {
-        this.saveList[range] = {
+        let range = data.range;
+        let range1 = data.range1;
+        let range2 = data.range2;
+
+        this.saveList.push({
             'event' : 'join',
-            'range' : [range, range],
+            'range' : [range1, range2],
             'sentence' : this.getSentenceObject(range)
-        };
+        });
     }
 
     onSplit = (event, data) => {
-        this.saveList[range] = {
+        let range = data.range;
+        let range1 = data.range1;
+        let range2 = data.range2;
+
+        this.saveList.push({
             'event' : 'split',
-            'range' : [range, range],
+            'range' : [range, range1, range2],
             'sentence' : this.getSentenceObject(range)
-        };
+        });
     }
 
     save = () => {
-        if ( Object.keys(this.saveList).length === 0 ){
+        if ( this.saveList.length === 0 ){
             return;
         }
 
@@ -82,7 +95,7 @@ class EditorData extends EditorCore {
             'type': 'PUT',
             'url': '/document/1/sentence',
             'data': {
-                'sentence': Object.keys(this.saveList).map((key) => {return this.saveList[key]})
+                'sentence': this.saveList
             },
             'success': function (data) {
             }

@@ -17,5 +17,6 @@ class Sentence extends Model
         'source_tag',
         'target',
         'target_tag',
+        'document_id',
     ];
 }

@@ -1,14 +1,18 @@
 let editor = {};
 
-(function(){
+(function() {
     const editorView = new EditorView;
+    const editorSchedule = new EditorSchedule;
+    const editorEvent = new EditorEvent;
     const editorInput = new EditorInput;
     const editorOperation = new EditorOperation;
     const editorData = new EditorData;
+    const editorFilter = new EditorFilter;
+    const editorLookup = new EditorLookup;
 
     let property = {};
 
-    const initialize = function(){
+    const initialize = function() {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -16,27 +20,28 @@ let editor = {};
         });
 
         //getMeta();
-        getSentence();
+        //getSentence();
 
         editorInput.initialize();
         editorOperation.initialize();
-        
+
         editorView.convertHTML();
     };
 
-    const getMeta = function(){
+
+    const getMeta = function() {
         $.ajax({
             'url': '/editor/1/meta',
-            'success': function( data ){
+            'success': function(data) {
                 property.meta = data;
             }
         });
     }
 
-    const getSentence = function(){
+    const getSentence = function() {
         $.ajax({
             'url': '/editor/1/sentence',
-            'success': function( data ){
+            'success': function(data) {
                 //console.log(data);
             }
         });

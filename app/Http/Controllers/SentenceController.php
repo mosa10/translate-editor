@@ -18,13 +18,14 @@ class SentenceController extends Controller
     public function update( $documentId, SentenceStoreRequest $request )
     {
         foreach ( $request->sentence as $reqSentence ){
-            $tmp = (object)$reqSentence;
-
-            $sentence = Sentence::where('range', $tmp->range)->first();
-            $sentence->fill($reqSentence)->save();
-
-            print_r($tmp);
+            if ( $reqSentence['event'] == 'update' ){
+                $sentence = Sentence::where('range', $reqSentence['range'])->first();
+                $sentence->fill($reqSentence['sentence'])->save();
+            } else if ( $reqSentence['event'] == 'join' ){
+                Sentence::where('range', $reqSentence['range'][0])->first()->delete();
+                Sentence::where('range', $reqSentence['range'][1])->first()->delete();
+                Sentence::create($reqSentence['sentence']);
+            }
         }
-
     }
 }

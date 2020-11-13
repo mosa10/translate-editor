@@ -23,8 +23,11 @@ class CreateDocumentTable extends Migration
             $table->text('range');
             $table->text('source');
             $table->text('source_tag');
-            $table->text('target');
-            $table->text('target_tag');
+            $table->text('target')->nullable();
+            $table->text('target_tag')->nullable();
+            $table->text('confirm')->nullable();
+            $table->text('preprocess')->nullable();
+            $table->text('bookmark')->nullable();
             $table->foreignId('document_id')->constrained('document');
             $table->timestamps();
         });
@@ -37,7 +40,7 @@ class CreateDocumentTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('document');
         Schema::dropIfExists('sentence');
+        Schema::dropIfExists('document');
     }
 }

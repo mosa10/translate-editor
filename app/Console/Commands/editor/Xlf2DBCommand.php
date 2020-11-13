@@ -4,6 +4,8 @@ namespace App\Console\Commands\editor;
 
 use Illuminate\Console\Command;
 use App\Service\DocumentService;
+use App\Models\Document;
+use App\Models\Sentence;
 
 class Xlf2DBCommand extends Command
 {
@@ -42,6 +44,7 @@ class Xlf2DBCommand extends Command
 
         $documentService = new DocumentService;
         $documentService->create("/var/www/data/test.docx.xlf");
+        //$documentService->create("/var/www/data/test2.html.xlf");
 
         return 0;
     }

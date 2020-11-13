@@ -1,21 +1,96 @@
+body {
+    overflow: hidden;
+}
+
+
+/* menu */
+
+#menu {
+    background-color: #444;
+}
+
+
+/* filter */
+
+#filter {
+    display: none;
+}
+
+.txt.filter-hit {
+    background-color: #c77;
+}
+
+.txt.filter-hit.filter-focus {
+    background-color: rgb(207, 68, 68);
+}
+
+#main {
+    display: flex;
+}
+
+#map {
+    width: 100px;
+}
+
+
+/* workspace */
+
+#workspace {
+    flex-grow: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 table {
     width: 100%;
 }
+
 td {
-    width: 50%;
     border: 1px solid #ccc;
     word-break: break-all;
 }
 
-/**
- * tag
- */
+td.td-position {
+    width: 20px;
+    font-size: 12px;
+    text-align: right;
+}
+
+td.td-confirm {
+    width: 20px;
+}
+
+td.td-preprocess {
+    width: 20px;
+    font-size: 10px;
+}
+
+td.td-bookmark {
+    width: 20px;
+}
+
+td.td-comment {
+    width: 20px;
+}
+
+
+/* text */
+
+.text-s {
+    background-color: #f6f6f6;
+}
+
+
+/* tag */
+
 .tag {
     background-color: #4fe4ff;
 }
+
 .tag-open {
     border-radius: 10px 0 0 10px;
 }
+
 .tag-close {
     border-radius: 0 10px 10px 0;
 }
@@ -27,34 +102,116 @@ td {
 #test {
     font-size: 0;
 }
-.txt, .pre, .tag {
+
+.txt,
+.pre,
+.tag {
     font-size: 16px;
     margin: 0;
     padding: 0px;
     border-left: 1px solid transparent;
     /* user-select */
-    user-select: none; /* CSS3 */
-    -moz-user-select: none; /* Firefox */
-    -webkit-user-select: none; /* Safari、Chromeなど */
-    -ms-user-select: none; /* IE10 */
+    user-select: none;
+    /* CSS3 */
+    -moz-user-select: none;
+    /* Firefox */
+    -webkit-user-select: none;
+    /* Safari、Chromeなど */
+    -ms-user-select: none;
+    /* IE10 */
+    cursor: text;
 }
+
 .pre {
     border-bottom: 2px solid #c77;
 }
+
 .txt.caret {
-    border-left: 1px solid #444;
+    border-left: 1px solid #000;
 }
+
 .pre.caret {
     border-left: 1px solid #a00;
 }
+
+.caret.blink {
+    border-left-color: transparent;
+}
+
 .cursor {
     position: absolute;
 }
-#input-key, .copy {
+
+.txt.lookup {
+    border-bottom: 1px solid #999;
+}
+
+.txt.lookup.hover {
+    color: #f66;
+    border-bottom: 1px solid #f66;
+}
+
+.txt.lookup.focus {
+    color: #fff;
+    background-color: #f66;
+}
+
+#input-key,
+.copy {
     opacity: 1;
     width: 1px;
     height: 1px;
 }
+
 .selection {
     background-color: #9edce7;
+}
+
+
+/* lookup */
+
+.lookup-popup {
+    margin: 0;
+    padding: 0;
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    list-style: none;
+    border: 1px solid #444;
+}
+
+.lookup-popup li:nth-child(even) {
+    background-color: #f6f6f6;
+}
+
+.lookup-popup .dict span {
+    color: #fff;
+    background-color: #444;
+}
+
+.lookup-popup .source a {
+    color: #fff;
+    background-color: #aaa;
+}
+
+.lookup-popup a,
+.lookup-popup span {
+    padding: 4px;
+    display: block;
+}
+
+.lookup-popup a.hover {
+    color: #fff;
+    background-color: #4fe4ff;
+}
+
+.lookup-popup a:hover {
+    text-decoration: none;
+}
+
+
+/* footer */
+
+#footer>div {
+    float: left;
 }

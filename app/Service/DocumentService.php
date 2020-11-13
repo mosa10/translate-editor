@@ -45,30 +45,61 @@ class DocumentService
         return $tmp;
     }
 
+    private function getText(DOMDocument $dom, DOMNode $transUnit, String $tagName)
+    {
+        // source要素 取得
+        $listSource = $transUnit->getElementsByTagName($tagName);
+        // 先頭取得
+        $source = $listSource->item(0);
+
+        return $source->nodeValue;
+    }
+
     public function create(String $pathXlf)
     {
         $document = new Document;
         $id = $document->save();
+
+        Sentence::where('document_id', $id)->delete();
 
         $domIn = new DOMDocument;
         $domIn->load($pathXlf);
 
         $listTransUnit = $domIn->getElementsByTagName("trans-unit");
 
+        // Todo
+        $P = [
+            'mt', 'sim', 'src', 'none'
+        ];
+
         foreach ($listTransUnit as $transUnit) {
             $sentence = new Sentence;
 
+            // get source text
+            $textS = $this->getText($domIn, $transUnit, "source");
+            // get text length
+            $lenS = mb_strlen($textS);
+
             // id / range
             $range = $transUnit->getAttribute("id");
-            $sentence->range = "{$range}:0-e";
+            $sentence->range = "{$range}:0-{$lenS}";
 
             // source
-            $sentence->source = $this->getEditText($domIn, $transUnit, "source");
+            $sentence->source = $this->getText($domIn, $transUnit, "source");
             $sentence->source_tag = $this->getEditText($domIn, $transUnit, "source");
 
             // target
-            $sentence->target = $this->getEditText($domIn, $transUnit, "target");
-            $sentence->target_tag = $this->getEditText($domIn, $transUnit, "target");
+            //$sentence->target = $this->getText($domIn, $transUnit, "target");
+            //$sentence->target_tag = $this->getEditText($domIn, $transUnit, "target");
+            $sentence->target = $this->getText($domIn, $transUnit, "source");
+            $sentence->target_tag = $this->getEditText($domIn, $transUnit, "source");
+
+            // confirm
+            $sentence->confirm = rand("0", "1");
+            // preprocess
+            $sentence->preprocess = $P[rand(0, count($P)-1)];
+            // bookmark
+            $sentence->bookmark = rand("0", "1");
 
             $sentence->document_id = $id;
 
