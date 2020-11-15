@@ -10,6 +10,17 @@ body {
 }
 
 
+/* operation */
+
+.btn-operation-bookmark {
+    padding: 0;
+}
+
+.btn-operation-bookmark.active {
+    color: #007bff;
+}
+
+
 /* filter */
 
 #filter {
@@ -210,8 +221,18 @@ td.td-comment {
 }
 
 
+/* comment */
+
+#comment-popup {
+    display: none;
+    position: absolute;
+    /* Todo: */
+    width: 400px;
+}
+
+
 /* footer */
 
-#footer>div {
-    float: left;
+#footer {
+    overflow: auto;
 }

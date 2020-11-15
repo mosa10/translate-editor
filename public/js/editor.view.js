@@ -8,9 +8,13 @@ class EditorView {
     onResize = () => {
         console.log(window.innerHeight, $('#menu').outerHeight(), $('#filter').outerHeight(), $('#operation').outerHeight(), $('#footer').outerHeight());
 
-        let h = window.innerHeight - ($('#menu').outerHeight() + $('#filter').outerHeight() + $('#operation').outerHeight() + $('#footer').outerHeight());
+        let h = window.innerHeight - ($('#menu').outerHeight() + $('#operation').outerHeight() + $('#footer').outerHeight());
 
-        $('#workspace').css('height', h + 'px');
+        if ($('#filter').is(':visible')) {
+            h -= $('#filter').outerHeight();
+        }
+
+        $('#main').css('height', h + 'px');
 
         // Todo: 処理場所移動
         this.count();

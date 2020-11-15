@@ -111,17 +111,29 @@
         </div>
 
         <div id="footer">
-            <div id="count-sentence-char">
-                <span>文章文字数</span>
-                <span class="value"></span>
+            <div class="float-left">
+                <a id="btn-operation-bookmark" class="btn btn-light"><i class="fas fa-bookmark"></i></a>
+                <span class="btn-group" role="group">
+                    {{--  --}}
+                    <a id="btn-operation-bookmark-prev" class="btn btn-light"><i class="fas fa-arrow-up"></i></a>
+                    {{--  --}}
+                    <a id="btn-operation-bookmark-next" class="btn btn-light"><i class="fas fa-arrow-down"></i></a>
+                </span>
             </div>
-            <div id="count-document-char">
-                <span>文書文字数</span>
-                <span class="value"></span>
-            </div>
-            <div id="count-sentence">
-                <span>文章数</span>
-                <span class="value"></span>
+
+            <div class="float-right">
+                <span id="count-sentence-char">
+                    <span>文章文字数</span>
+                    <span class="value"></span>
+                </span>
+                <span id="count-document-char">
+                    <span>文書文字数</span>
+                    <span class="value"></span>
+                </span>
+                <span id="count-sentence">
+                    <span>文章数</span>
+                    <span class="value"></span>
+                </span>
             </div>
         </div>
 
@@ -136,6 +148,26 @@
             <li data-target="source target"><a href="#"><i class="fas fa-check-square"></i> 用語登録</a></li>
         </ul>
 
+        {{-- コメント --}}
+        <div id="comment-popup" tabindex="-1" role="dialog">
+            <div crole="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Modal title</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
         <template id="template-sentence">
             @component('document.sentence')
             @endcomponent
